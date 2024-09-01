@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:notes_app/components/custom_drawer/custom_drawer.dart';
 import 'package:notes_app/models/note.dart';
 import 'package:notes_app/models/note_database.dart';
+import 'package:notes_app/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 class NotesPage extends StatefulWidget {
@@ -98,11 +99,12 @@ class _NotesPageState extends State<NotesPage> {
 
     return Scaffold(
         appBar: AppBar( 
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
           elevation: 0,
           backgroundColor: Colors.transparent,
           foregroundColor: Theme.of(context).colorScheme.inversePrimary,
-          
+          systemOverlayStyle: Provider.of<ThemeProvider>(context, listen: false).isDarkMode 
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,
         floatingActionButton: FloatingActionButton(
