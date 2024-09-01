@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:notes_app/components/custom_drawer/custom_drawer.dart';
+import 'package:notes_app/components/custom_grid_note/custom_grid_note.dart';
 import 'package:notes_app/models/note.dart';
 import 'package:notes_app/models/note_database.dart';
 import 'package:notes_app/theme/theme_provider.dart';
@@ -24,9 +25,11 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   void createNote() {
+    textController.text = '';
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
+                title: const Text('Enter title'),
                 content: TextField(
                   controller: textController,
                 ),
@@ -34,11 +37,11 @@ class _NotesPageState extends State<NotesPage> {
                   MaterialButton(
                       onPressed: () {
                         String noteText = textController.text.trim();
-                         if (noteText.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Title cannot be empty.'),
-                              ),
+                        if (noteText.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Title cannot be empty.'),
+                            ),
                           );
                           return;
                         }
@@ -49,28 +52,29 @@ class _NotesPageState extends State<NotesPage> {
                         textController.clear();
                       },
                       child: const Text('Create'))
-                ]));
+                ]),
+        barrierColor: Colors.black.withOpacity(0.5));
   }
 
-  void updateNote(Note note) {
+  void updateTitleOfNote(Note note) {
     textController.text = note.title;
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: const Text('Update text'),
+              title: const Text('Update title'),
               content: TextField(controller: textController),
               actions: [
                 MaterialButton(
                     onPressed: () {
                       String noteText = textController.text.trim();
-                         if (noteText.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Title cannot be empty.'),
-                              ),
-                          );
-                          return;
-                        }
+                      if (noteText.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Title cannot be empty.'),
+                          ),
+                        );
+                        return;
+                      }
 
                       context
                           .read<NoteDatabase>()
@@ -79,9 +83,8 @@ class _NotesPageState extends State<NotesPage> {
                     },
                     child: const Text('Update'))
               ],
-            )).then((_) {
-      textController.clear();
-    });
+            ),
+        barrierColor: Colors.black.withOpacity(0.5));
   }
 
   void deleteNode(int id) {
@@ -98,13 +101,14 @@ class _NotesPageState extends State<NotesPage> {
     List<Note> currentNotes = noteDatabase.currentNotes;
 
     return Scaffold(
-        appBar: AppBar( 
+        appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
           foregroundColor: Theme.of(context).colorScheme.inversePrimary,
-          systemOverlayStyle: Provider.of<ThemeProvider>(context, listen: false).isDarkMode 
-            ? SystemUiOverlayStyle.light
-            : SystemUiOverlayStyle.dark,
+          systemOverlayStyle:
+              Provider.of<ThemeProvider>(context, listen: false).isDarkMode
+                  ? SystemUiOverlayStyle.light
+                  : SystemUiOverlayStyle.dark,
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,
         floatingActionButton: FloatingActionButton(
@@ -124,26 +128,20 @@ class _NotesPageState extends State<NotesPage> {
 
             //LIST OF NOTES
             Expanded(
-              child: ListView.builder(
-                itemCount: currentNotes.length,
-                itemBuilder: (context, index) {
-                  final note = currentNotes[index];
-                  return ListTile(
-                      title: Text(note.title),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                              onPressed: () => updateNote(note),
-                              icon: const Icon(Icons.edit)),
-                          IconButton(
-                              onPressed: () => deleteNode(note.id),
-                              icon: const Icon(Icons.delete))
-                        ],
-                      ));
-                },
+                child: GridView.builder(
+              padding: const EdgeInsets.all(25),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10.0,
+                mainAxisSpacing: 25.0,
+                childAspectRatio: 0.7,
               ),
-            ),
+              itemCount: currentNotes.length,
+              itemBuilder: (BuildContext context, int index) {
+                return CustomGridItem(
+                    note: currentNotes[index], onTap: updateTitleOfNote);
+              },
+            )),
           ],
         ));
   }
