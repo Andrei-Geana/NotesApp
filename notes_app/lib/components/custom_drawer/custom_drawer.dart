@@ -16,7 +16,7 @@ class CustomDrawer extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
-            const DrawerHeader(child: Icon(Icons.note)),
+            const DrawerHeader(child: Icon(Icons.note),),
             DrawerTile(
               title: 'Home', 
               leading: const Icon(Icons.home), 
