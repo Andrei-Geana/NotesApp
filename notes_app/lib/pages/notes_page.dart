@@ -139,7 +139,9 @@ class _NotesPageState extends State<NotesPage> {
               itemCount: currentNotes.length,
               itemBuilder: (BuildContext context, int index) {
                 return CustomGridItem(
-                    note: currentNotes[index], onTap: updateTitleOfNote);
+                    note: currentNotes[index], onEditTitleTap: updateTitleOfNote,
+                    onNoteSettingsTap: updateTitleOfNote,
+                    onDeleteTap: deleteNode,);
               },
             )),
           ],
