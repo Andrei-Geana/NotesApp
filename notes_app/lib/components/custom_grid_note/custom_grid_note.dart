@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/components/custom_grid_note/note_settings.dart';
 import 'package:notes_app/models/note.dart';
+import 'package:notes_app/pages/individual_note_page.dart';
 import 'package:popover/popover.dart';
 
 class CustomGridItem extends StatelessWidget {
@@ -51,7 +52,11 @@ class CustomGridItem extends StatelessWidget {
               color: Theme.of(context).colorScheme.secondary,
               child: InkWell(
                 onTap: () {
-                  
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => IndividualNotePage(note: note))
+                );
                 },
                 splashColor:
                     Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
@@ -62,7 +67,7 @@ class CustomGridItem extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          note.title,
+                          note.data,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.inversePrimary,
                             fontSize: 12,

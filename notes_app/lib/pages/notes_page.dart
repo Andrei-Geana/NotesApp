@@ -78,7 +78,7 @@ class _NotesPageState extends State<NotesPage> {
 
                       context
                           .read<NoteDatabase>()
-                          .updateNote(note.id, textController.text);
+                          .updateNoteTitle(note.id, textController.text);
                       Navigator.pop(context);
                     },
                     child: const Text('Update'))

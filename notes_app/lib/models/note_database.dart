@@ -32,11 +32,20 @@ class NoteDatabase extends ChangeNotifier {
   }
 
   //UPDATE
-  Future<void> updateNote(int id, String newTitle) async {
+  Future<void> updateNoteTitle(int id, String newTitle) async {
     final existingNote = await isar.notes.get(id);
     if (existingNote != null) {
       existingNote.title = newTitle;
       await isar.writeTxn(() => isar.notes.put(existingNote));
+      await fetchNotes();
+    }
+  }
+
+  Future<void> updateNote(Note note) async {
+    Note? existingNote = await isar.notes.get(note.id);
+    if (existingNote != null) {
+      existingNote = note;
+      await isar.writeTxn(() => isar.notes.put(existingNote!));
       await fetchNotes();
     }
   }
