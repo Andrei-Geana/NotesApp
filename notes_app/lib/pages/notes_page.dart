@@ -16,12 +16,21 @@ class NotesPage extends StatefulWidget {
 
 class _NotesPageState extends State<NotesPage> {
   final textController = TextEditingController();
+  final searchController = TextEditingController();
+  List<Note> filteredNotes = [];
 
   @override
   void initState() {
     super.initState();
 
     readNotes();
+    searchController.addListener(_filterNotes);
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   void createNote() {
@@ -95,10 +104,27 @@ class _NotesPageState extends State<NotesPage> {
     context.read<NoteDatabase>().fetchNotes();
   }
 
+  void _filterNotes() {
+    final query = searchController.text.toLowerCase();
+    final noteDatabase = context.read<NoteDatabase>();
+    final allNotes = noteDatabase.currentNotes;
+
+    setState(() {
+      filteredNotes = allNotes.where((note) {
+        final titleMatches = note.title.toLowerCase().contains(query);
+        final dateMatches = note.data.toLowerCase().contains(query);
+        return titleMatches || dateMatches;
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final noteDatabase = context.watch<NoteDatabase>();
-    List<Note> currentNotes = noteDatabase.currentNotes;
+
+    final displayNotes = searchController.text.isEmpty
+        ? noteDatabase.currentNotes
+        : filteredNotes;
 
     return Scaffold(
         appBar: AppBar(
@@ -120,11 +146,23 @@ class _NotesPageState extends State<NotesPage> {
           children: [
             //HEADING
             Padding(
-                padding: const EdgeInsets.all(25.0),
+                padding: const EdgeInsets.all(15.0),
                 child: Text('Notes',
                     style: TextStyle(
                         fontSize: 40,
                         color: Theme.of(context).colorScheme.inversePrimary))),
+
+            //SEARCH BAR
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                controller: searchController,
+                decoration: const InputDecoration(
+                  labelText: 'Search',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
 
             //LIST OF NOTES
             Expanded(
@@ -136,12 +174,14 @@ class _NotesPageState extends State<NotesPage> {
                 mainAxisSpacing: 25.0,
                 childAspectRatio: 0.7,
               ),
-              itemCount: currentNotes.length,
+              itemCount: displayNotes.length,
               itemBuilder: (BuildContext context, int index) {
                 return CustomGridItem(
-                    note: currentNotes[index], onEditTitleTap: updateTitleOfNote,
-                    onNoteSettingsTap: updateTitleOfNote,
-                    onDeleteTap: deleteNode,);
+                  note: displayNotes[index],
+                  onEditTitleTap: updateTitleOfNote,
+                  onNoteSettingsTap: updateTitleOfNote,
+                  onDeleteTap: deleteNode,
+                );
               },
             )),
           ],

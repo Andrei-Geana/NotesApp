@@ -59,7 +59,7 @@ class CustomGridItem extends StatelessWidget {
                 );
                 },
                 splashColor:
-                    Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
+                    Theme.of(context).colorScheme.tertiary.withOpacity(0),
                 child: Stack(
                   children: [
                     Padding(

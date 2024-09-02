@@ -26,7 +26,7 @@ class CustomDrawer extends StatelessWidget {
               title: 'Settings', 
               leading: const Icon(Icons.settings), 
               onTap: () {
-                //Navigator.pop(context);
+                Navigator.pop(context);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
